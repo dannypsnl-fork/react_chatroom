@@ -22,7 +22,7 @@ defmodule ReactChatroomWeb.Router do
   scope "/api" do
     pipe_through :api
 
-    # forward "/", Absinthe.Plug, schema: ReactChatroomWeb.Schema
+    forward "/graph", Absinthe.Plug, schema: ReactChatroomWeb.Schema
     forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ReactChatroomWeb.Schema
   end
 
