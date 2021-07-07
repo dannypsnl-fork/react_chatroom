@@ -12,8 +12,8 @@ const client = new ApolloClient({
 });
 
 const App = () => (
-  <Router>
-    <ApolloProvider client={client}>
+  <ApolloProvider client={client}>
+    <Router>
       <h1> React App </h1>
       <ul>
         <li>
@@ -33,8 +33,8 @@ const App = () => (
           </Route>
         </Switch>
       </ul>
-    </ApolloProvider>
-  </Router>
+    </Router>
+  </ApolloProvider>
 );
 
 define({ "x-app": App });
