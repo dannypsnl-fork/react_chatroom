@@ -19,6 +19,13 @@ defmodule ReactChatroomWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/api" do
+    pipe_through :api
+
+    # forward "/", Absinthe.Plug, schema: ReactChatroomWeb.Schema
+    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ReactChatroomWeb.Schema
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", ReactChatroomWeb do
   #   pipe_through :api

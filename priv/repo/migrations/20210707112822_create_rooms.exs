@@ -8,5 +8,6 @@ defmodule ReactChatroom.Repo.Migrations.CreateRooms do
       timestamps()
     end
 
+    create unique_index(:rooms, [:name])
   end
 end
