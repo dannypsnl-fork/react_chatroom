@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { define } from "remount";
 import Home from "./Home";
 import About from "./About";
+import Room from "./Room";
 
 const App = () => (
   <Router>
@@ -19,6 +20,7 @@ const App = () => (
         <Route path="/about">
           <About />
         </Route>
+        <Route path="/room/:roomId" component={Room}></Route>
         <Route path="/">
           <Home />
         </Route>

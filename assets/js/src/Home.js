@@ -1,7 +1,12 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Room({ index, name }) {
-  return <li key={index}>{name}</li>;
+  return (
+    <li key={index}>
+      <Link to={`room/${name}`}>{name}</Link>
+    </li>
+  );
 }
 
 export default function Home() {
