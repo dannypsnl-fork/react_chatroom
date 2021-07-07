@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, hashHistory } from "react-router-dom";
 import { gql } from "apollo-boost";
 import { Query, Mutation } from "react-apollo";
 
@@ -18,10 +18,38 @@ const createRoomQuery = gql`
   }
 `;
 
-function Room({ index, name }) {
+const deleteRoomQuery = gql`
+  mutation ($id: ID!) {
+    deleteRoom(id: $id)
+  }
+`;
+
+function Room({ id, name }) {
   return (
-    <li key={index}>
+    <li key={id}>
       <Link to={`room/${name}`}>{name}</Link>
+      <Mutation
+        mutation={deleteRoomQuery}
+        refetchQueries={() => {
+          return [{ query: getRoomsQuery }];
+        }}
+      >
+        {(mutate, { _, loading, error }) => {
+          if (loading) return "mutating";
+          if (error) return `${error}`;
+
+          return (
+            <button
+              onClick={(_e) => {
+                mutate({ variables: { id } });
+                hashHistory.push("/");
+              }}
+            >
+              remove
+            </button>
+          );
+        }}
+      </Mutation>
     </li>
   );
 }
@@ -32,10 +60,15 @@ export default function Home() {
   return (
     <>
       <h1>Home</h1>
-      <Mutation mutation={createRoomQuery}>
-        {(mutate, { data, loading, error }) => {
+      <Mutation
+        mutation={createRoomQuery}
+        refetchQueries={() => {
+          return [{ query: getRoomsQuery }];
+        }}
+      >
+        {(mutate, { _, loading, error }) => {
           if (loading) return "mutating...";
-          if (error) return alert("Error");
+          if (error) return `${error}`;
           let createNewRoom = () => {
             mutate({ variables: { name: roomName } });
             setRoomName("");
@@ -61,7 +94,7 @@ export default function Home() {
           if (error) return <p>Error :( {error}</p>;
           // 最重要的就是從 data 裡面取得資料
           const lists = data.rooms.map((room) => (
-            <Room index={room.id} name={room.name}></Room>
+            <Room id={room.id} name={room.name}></Room>
           ));
 
           return (
