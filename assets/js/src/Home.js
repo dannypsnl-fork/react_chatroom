@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { gql } from "apollo-boost";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 
 const getRoomsQuery = gql`
   {
@@ -9,6 +9,12 @@ const getRoomsQuery = gql`
       id
       name
     }
+  }
+`;
+
+const createRoomQuery = gql`
+  mutation ($name: String!) {
+    createRoom(name: $name)
   }
 `;
 
@@ -23,19 +29,32 @@ function Room({ index, name }) {
 export default function Home() {
   let [roomName, setRoomName] = useState("");
 
-  let createNewRoom = () => {
-    setRoomName("");
-  };
-
   return (
     <>
       <h1>Home</h1>
-      <input
-        value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
-        onKeyDown={(e) => (e.key === "Enter" ? createNewRoom() : null)}
-      ></input>
-      <button onClick={(_e) => createNewRoom()}>create new rooms</button>
+      <Mutation mutation={createRoomQuery}>
+        {(mutate, { data, loading, error }) => {
+          if (loading) return "mutating...";
+          if (error) return alert("Error");
+          let createNewRoom = () => {
+            mutate({ variables: { name: roomName } });
+            setRoomName("");
+          };
+          return (
+            <>
+              <input
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                onKeyDown={(e) => (e.key === "Enter" ? createNewRoom() : null)}
+              ></input>
+              <button onClick={(_e) => createNewRoom()}>
+                create new rooms
+              </button>
+            </>
+          );
+        }}
+      </Mutation>
+
       <Query query={getRoomsQuery}>
         {({ loading, error, data }) => {
           if (loading) return <p>Loading...</p>;
