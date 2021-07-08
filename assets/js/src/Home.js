@@ -24,10 +24,10 @@ const deleteRoomQuery = gql`
   }
 `;
 
-function Room({ id, name }) {
+function RoomLink({ id, name }) {
   return (
     <li key={id}>
-      <Link to={`room/${name}`}>{name}</Link>
+      <Link to={`room/${id}`}>{name}</Link>
       <Mutation
         mutation={deleteRoomQuery}
         refetchQueries={() => {
@@ -42,7 +42,6 @@ function Room({ id, name }) {
             <button
               onClick={(_e) => {
                 mutate({ variables: { id } });
-                hashHistory.push("/");
               }}
             >
               remove
@@ -92,15 +91,13 @@ export default function Home() {
         {({ loading, error, data }) => {
           if (loading) return <p>Loading...</p>;
           if (error) return <p>Error :( {error}</p>;
-          // 最重要的就是從 data 裡面取得資料
-          const lists = data.rooms.map((room) => (
-            <Room id={room.id} name={room.name}></Room>
-          ));
 
           return (
-            <div>
-              <ul>{lists}</ul>
-            </div>
+            <ul>
+              {data.rooms.map((room) => (
+                <RoomLink id={room.id} name={room.name}></RoomLink>
+              ))}
+            </ul>
           );
         }}
       </Query>

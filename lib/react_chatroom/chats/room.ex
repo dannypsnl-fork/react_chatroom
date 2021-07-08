@@ -4,6 +4,7 @@ defmodule ReactChatroom.Chats.Room do
 
   schema "rooms" do
     field :name, :string
+    has_many :messages, ReactChatroom.Chats.Message
 
     timestamps()
   end

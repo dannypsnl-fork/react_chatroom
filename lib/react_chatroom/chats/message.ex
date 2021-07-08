@@ -3,8 +3,9 @@ defmodule ReactChatroom.Chats.Message do
   import Ecto.Changeset
 
   schema "messages" do
-    belongs_to(:user, ReactChatroom.Chats.User)
+    belongs_to(:room, ReactChatroom.Chats.Room)
 
+    field :name, :string
     field :body, :string
 
     timestamps()
@@ -13,7 +14,7 @@ defmodule ReactChatroom.Chats.Message do
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:body])
-    |> validate_required([:body])
+    |> cast(attrs, [:room_id, :name, :body])
+    |> validate_required([:room_id, :name, :body])
   end
 end
