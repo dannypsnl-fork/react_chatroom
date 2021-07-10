@@ -51,11 +51,9 @@ defmodule ReactChatroomWeb.Schema do
 
     @desc "Create new message"
     field :create_message, :string do
-      arg(:room_id, non_null(:id))
-      arg(:name, non_null(:string))
-      arg(:body, non_null(:string))
+      arg(:input, :create_message_input)
 
-      resolve(fn _, params, _resolution ->
+      resolve(fn _, %{input: params}, _resolution ->
         case ReactChatroom.Chats.create_message(params) do
           {:ok, _} -> {:ok, "message created"}
           {:error, err} -> {:error, inspect(err)}
