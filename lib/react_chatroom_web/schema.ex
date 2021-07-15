@@ -1,5 +1,6 @@
 defmodule ReactChatroomWeb.Schema do
   use Absinthe.Schema
+  alias ReactChatroomWeb.Schema.Middleware.Auth
 
   import_types(ReactChatroomWeb.Schema.Account)
   import_types(ReactChatroomWeb.Schema.Room)
@@ -8,6 +9,8 @@ defmodule ReactChatroomWeb.Schema do
   query do
     @desc "Get a list of rooms"
     field :rooms, list_of(:room) do
+      middleware(Auth)
+
       resolve(fn _, _params, _resolution ->
         {:ok, ReactChatroom.Chats.list_rooms()}
       end)
@@ -15,6 +18,7 @@ defmodule ReactChatroomWeb.Schema do
 
     @desc "Get a list of messages of a room"
     field :messages, list_of(:message) do
+      middleware(Auth)
       arg(:room_id, non_null(:id))
 
       resolve(fn _, %{room_id: room_id}, _resolution ->
@@ -46,6 +50,7 @@ defmodule ReactChatroomWeb.Schema do
 
     @desc "Create new room"
     field :create_room, :string do
+      middleware(Auth)
       arg(:name, non_null(:string))
 
       resolve(fn _, params, _resolution ->
@@ -58,6 +63,7 @@ defmodule ReactChatroomWeb.Schema do
 
     @desc "Delete room"
     field :delete_room, :string do
+      middleware(Auth)
       arg(:id, non_null(:id))
 
       resolve(fn _, %{id: id}, _resolution ->
@@ -72,6 +78,7 @@ defmodule ReactChatroomWeb.Schema do
 
     @desc "Create new message"
     field :create_message, :string do
+      middleware(Auth)
       arg(:input, :create_message_input)
 
       resolve(fn _, %{input: params}, _resolution ->

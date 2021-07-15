@@ -43,4 +43,21 @@ defmodule ReactChatroomWeb.Schema.LoginTest do
         assert result == "login failed"
     end
   end
+
+  @rooms """
+  query rooms {
+    rooms {
+      name
+    }
+  }
+  """
+
+  test "cannot list rooms without login", %{conn: conn} do
+    conn = post(conn, "/api/graph", %{"query" => @rooms})
+
+    case json_response(conn, 200) do
+      %{"errors" => [%{"message" => result}]} ->
+        assert result == "unauthenticated"
+    end
+  end
 end

@@ -11,6 +11,7 @@ defmodule ReactChatroomWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ReactChatroomWeb.Context
   end
 
   scope "/", ReactChatroomWeb do
