@@ -10,13 +10,14 @@ const loginMutation = gql`
   }
 `;
 
-export default function Login() {
+export default function Login({ setHasToken }) {
   let [name, setUserName] = useState("");
   let [password, setPassword] = useState("");
 
   const [login] = useMutation(loginMutation, {
     onCompleted: ({ login: { token } }) => {
       localStorage.setItem("token", token);
+      setHasToken(true);
     },
   });
 

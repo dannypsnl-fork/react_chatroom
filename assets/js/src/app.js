@@ -33,10 +33,11 @@ const client = new ApolloClient({
 });
 
 const App = () => {
-  if (!localStorage.getItem("token")) {
+  const [hasToken, setHasToken] = useState(false);
+  if (!hasToken && !localStorage.getItem("token")) {
     return (
       <ApolloProvider client={client}>
-        <Login />
+        <Login setHasToken={setHasToken} />
       </ApolloProvider>
     );
   }
