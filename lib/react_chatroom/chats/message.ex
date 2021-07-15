@@ -4,8 +4,8 @@ defmodule ReactChatroom.Chats.Message do
 
   schema "messages" do
     belongs_to(:room, ReactChatroom.Chats.Room)
+    belongs_to(:user, ReactChatroom.Accounts.User)
 
-    field :name, :string
     field :body, :string
 
     timestamps()
@@ -14,7 +14,7 @@ defmodule ReactChatroom.Chats.Message do
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:room_id, :name, :body])
-    |> validate_required([:room_id, :name, :body])
+    |> cast(attrs, [:room_id, :user_id, :body])
+    |> validate_required([:room_id, :user_id, :body])
   end
 end

@@ -3,8 +3,8 @@ defmodule ReactChatroom.Repo.Migrations.CreateMessages do
 
   def change do
     create table(:messages) do
-      add :room_id, :integer
-      add :name, :text
+      add :room_id, references(:rooms)
+      add :user_id, references(:users)
       add :body, :text
 
       timestamps()

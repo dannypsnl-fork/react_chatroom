@@ -1,6 +1,7 @@
 defmodule ReactChatroomWeb.Schema do
   use Absinthe.Schema
 
+  import_types(ReactChatroomWeb.Schema.Account)
   import_types(ReactChatroomWeb.Schema.Room)
   import_types(ReactChatroomWeb.Schema.Message)
 
@@ -23,6 +24,26 @@ defmodule ReactChatroomWeb.Schema do
   end
 
   mutation do
+    field :login, :session do
+      arg(:input, :login_input)
+
+      resolve(fn _, %{input: %{name: name, password: pwd}}, _resolution ->
+        case ReactChatroom.Accounts.authenticate(name, pwd) do
+          {:ok, user} ->
+            token =
+              ReactChatroomWeb.Authenicate.sign(%{
+                name: name,
+                id: user.id
+              })
+
+            {:ok, %{token: token, user: user}}
+
+          _ ->
+            {:error, "login failed"}
+        end
+      end)
+    end
+
     @desc "Create new room"
     field :create_room, :string do
       arg(:name, non_null(:string))
