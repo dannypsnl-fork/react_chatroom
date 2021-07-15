@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { gql } from "apollo-boost";
+import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "react-apollo";
 
 const getMessagesQuery = gql`

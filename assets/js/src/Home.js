@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { gql } from "apollo-boost";
+import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "react-apollo";
 
 const getRoomsQuery = gql`
-  {
+  query {
     rooms {
       id
       name
@@ -12,20 +12,54 @@ const getRoomsQuery = gql`
   }
 `;
 
-const createRoomQuery = gql`
+const createRoomMutation = gql`
   mutation ($name: String!) {
     createRoom(name: $name)
   }
 `;
 
-const deleteRoomQuery = gql`
+const deleteRoomMutation = gql`
   mutation ($id: ID!) {
     deleteRoom(id: $id)
   }
 `;
 
+export default function Home() {
+  let [roomName, setRoomName] = useState("");
+  const { loading, error, data } = useQuery(getRoomsQuery);
+  const [mutate] = useMutation(createRoomMutation, {
+    refetchQueries: [{ query: getRoomsQuery }],
+  });
+  let createNewRoom = () => {
+    mutate({ variables: { name: roomName } });
+    setRoomName("");
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) {
+    console.error({ error });
+    return <p>Error :(</p>;
+  }
+  return (
+    <>
+      <h1>Home</h1>
+      <input
+        value={roomName}
+        onChange={(e) => setRoomName(e.target.value)}
+        onKeyDown={(e) => (e.key === "Enter" ? createNewRoom() : null)}
+      ></input>
+      <button onClick={(_e) => createNewRoom()}>create new rooms</button>
+      <ul>
+        {data.rooms.map((room) => (
+          <RoomLink id={room.id} name={room.name}></RoomLink>
+        ))}
+      </ul>
+    </>
+  );
+}
+
 function RoomLink({ id, name }) {
-  const [mutate, { _, loading, error }] = useMutation(deleteRoomQuery, {
+  const [mutate, { _, loading, error }] = useMutation(deleteRoomMutation, {
     refetchQueries: [{ query: getRoomsQuery }],
   });
 
@@ -42,36 +76,5 @@ function RoomLink({ id, name }) {
         remove
       </button>
     </li>
-  );
-}
-
-export default function Home() {
-  let [roomName, setRoomName] = useState("");
-  const { loading, error, data } = useQuery(getRoomsQuery);
-  const [mutate] = useMutation(createRoomQuery, {
-    refetchQueries: [{ query: getRoomsQuery }],
-  });
-  let createNewRoom = () => {
-    mutate({ variables: { name: roomName } });
-    setRoomName("");
-  };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :( {error}</p>;
-  return (
-    <>
-      <h1>Home</h1>
-      <input
-        value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
-        onKeyDown={(e) => (e.key === "Enter" ? createNewRoom() : null)}
-      ></input>
-      <button onClick={(_e) => createNewRoom()}>create new rooms</button>
-      <ul>
-        {data.rooms.map((room) => (
-          <RoomLink id={room.id} name={room.name}></RoomLink>
-        ))}
-      </ul>
-    </>
   );
 }

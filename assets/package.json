@@ -7,6 +7,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "@apollo/client": "^3.3.21",
     "@babel/preset-react": "^7.14.5",
     "apollo-boost": "^0.4.9",
     "graphql": "^15.5.1",
