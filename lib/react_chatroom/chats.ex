@@ -7,6 +7,7 @@ defmodule ReactChatroom.Chats do
   alias ReactChatroom.Repo
 
   alias ReactChatroom.Chats.Room
+  alias ReactChatroom.Accounts.User
 
   @doc """
   Returns the list of rooms.

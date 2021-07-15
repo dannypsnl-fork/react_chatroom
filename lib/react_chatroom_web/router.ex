@@ -9,15 +9,15 @@ defmodule ReactChatroomWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-    plug ReactChatroomWeb.Context
-  end
-
   scope "/", ReactChatroomWeb do
     pipe_through :browser
 
     get "/", PageController, :index
+  end
+
+  pipeline :api do
+    plug :accepts, ["json"]
+    plug ReactChatroomWeb.Context
   end
 
   scope "/api" do

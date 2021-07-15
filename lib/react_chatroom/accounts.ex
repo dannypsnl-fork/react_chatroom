@@ -18,8 +18,7 @@ defmodule ReactChatroom.Accounts do
   def authenticate(name, password) do
     user = Repo.get_by(User, name: name)
 
-    # case Password.valid?(password, user.password) do
-    case password == user.password do
+    case Password.valid?(password, user.password) do
       true -> {:ok, user}
       _ -> :error
     end

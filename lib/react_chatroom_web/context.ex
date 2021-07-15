@@ -10,12 +10,13 @@ defmodule ReactChatroomWeb.Context do
   end
 
   defp build_context(conn) do
-    with ["Bearer" <> token] <- get_req_header(conn, "authorization"),
-         {:ok, data} <- ReactChatroomWeb.Authenicate.verify(token),
-         %{} = user <- get_user(data) do
-      %{current_user: user}
+    with ["Bearer" <> token] <- get_req_header(conn, "authorization") do
+      IO.inspect(token)
+      {:ok, data} = ReactChatroomWeb.Authenicate.verify(token)
+      %{current_user: get_user(data)}
     else
-      _ -> %{}
+      _ ->
+        %{}
     end
   end
 

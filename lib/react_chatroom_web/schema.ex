@@ -36,7 +36,6 @@ defmodule ReactChatroomWeb.Schema do
           {:ok, user} ->
             token =
               ReactChatroomWeb.Authenicate.sign(%{
-                name: name,
                 id: user.id
               })
 
@@ -81,8 +80,10 @@ defmodule ReactChatroomWeb.Schema do
       middleware(Auth)
       arg(:input, :create_message_input)
 
-      resolve(fn _, %{input: params}, _resolution ->
-        case ReactChatroom.Chats.create_message(params) do
+      resolve(fn _,
+                 %{input: %{body: body, room_id: room_id}},
+                 %{context: %{current_user: user}} ->
+        case ReactChatroom.Chats.create_message(%{room_id: room_id, user_id: user.id, body: body}) do
           {:ok, _} -> {:ok, "message created"}
           {:error, err} -> {:error, inspect(err)}
         end

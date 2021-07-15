@@ -36,7 +36,6 @@ export default function Room({
       variables: {
         input: {
           roomId,
-          name: "danny",
           body: msg,
         },
       },

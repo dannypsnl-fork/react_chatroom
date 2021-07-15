@@ -4,15 +4,13 @@ defmodule ReactChatroomWeb.Schema.LoginTest do
   @login """
   mutation login($input: LoginInput) {
     login(input: $input) {
-      user {
-        name
-      }
+      token
     }
   }
   """
 
   test "login success", %{conn: conn} do
-    {:ok, _} = ReactChatroom.Accounts.create_user(%{name: "Test", password: "Test"})
+    ReactChatroom.Accounts.create_user(%{name: "Test", password: "Test"})
 
     conn =
       post(conn, "/api/graph", %{
@@ -24,13 +22,13 @@ defmodule ReactChatroomWeb.Schema.LoginTest do
       %{"errors" => result} ->
         flunk("failed #{inspect(result)}")
 
-      %{"data" => %{"login" => result}} ->
-        assert result == %{"user" => %{}}
+      %{"data" => %{"login" => %{"token" => token}}} ->
+        assert token != ""
     end
   end
 
   test "login failed", %{conn: conn} do
-    {:ok, _} = ReactChatroom.Accounts.create_user(%{name: "Test", password: "Test"})
+    ReactChatroom.Accounts.create_user(%{name: "Test", password: "Test"})
 
     conn =
       post(conn, "/api/graph", %{
@@ -58,6 +56,44 @@ defmodule ReactChatroomWeb.Schema.LoginTest do
     case json_response(conn, 200) do
       %{"errors" => [%{"message" => result}]} ->
         assert result == "unauthenticated"
+    end
+  end
+
+  test "login user can list rooms", %{conn: conn} do
+    ReactChatroom.Accounts.create_user(%{name: "Test", password: "Test"})
+
+    conn =
+      post(conn, "/api/graph", %{
+        "query" => @login,
+        "variables" => %{input: %{name: "Test", password: "Test"}}
+      })
+
+    case json_response(conn, 200) do
+      %{"errors" => result} ->
+        flunk("failed #{inspect(result)}")
+
+      %{
+        "data" => %{
+          "login" => %{
+            "token" => token
+          }
+        }
+      } ->
+        conn =
+          build_conn()
+          |> put_req_header(
+            "authorization",
+            "Bearer" <> token
+          )
+          |> post("/api/graph", %{"query" => @rooms})
+
+        case json_response(conn, 200) do
+          %{"errors" => [%{"message" => result}]} ->
+            flunk("failed #{inspect(result)}")
+
+          %{"data" => %{"rooms" => result}} ->
+            assert result == []
+        end
     end
   end
 end
