@@ -19,7 +19,7 @@ const createRoomMutation = gql`
 `;
 
 const deleteRoomMutation = gql`
-  mutation ($id: ID!) {
+  mutation ($id: String!) {
     deleteRoom(id: $id)
   }
 `;

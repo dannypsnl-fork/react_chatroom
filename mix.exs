@@ -48,7 +48,8 @@ defmodule ReactChatroom.MixProject do
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
       {:comeonin_ecto_password, "~> 3.0"},
-      {:pbkdf2_elixir, "~> 1.0"}
+      {:pbkdf2_elixir, "~> 1.0"},
+      {:hashids, "~> 2.0"}
     ]
   end
 

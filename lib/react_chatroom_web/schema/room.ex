@@ -3,7 +3,12 @@ defmodule ReactChatroomWeb.Schema.Room do
   alias ReactChatroomWeb.Schema.Middleware.Auth
 
   object :room do
-    field :id, :id
+    field :id, :string do
+      resolve(fn %ReactChatroom.Chats.Room{} = room, _, _ ->
+        {:ok, ReactChatroomWeb.Authenicate.encode(room.id)}
+      end)
+    end
+
     field :name, :string
   end
 
@@ -35,10 +40,10 @@ defmodule ReactChatroomWeb.Schema.Room do
     @desc "Delete room"
     field :delete_room, :string do
       middleware(Auth)
-      arg(:id, non_null(:id))
+      arg(:id, non_null(:string))
 
-      resolve(fn _, %{id: id}, _resolution ->
-        room = ReactChatroom.Chats.get_room!(id)
+      resolve(fn _, %{id: id_str}, _resolution ->
+        room = ReactChatroom.Chats.get_room!(ReactChatroomWeb.Authenicate.decode(id_str))
 
         case ReactChatroom.Chats.delete_room(room) do
           {:ok, _} -> {:ok, "room deleted"}

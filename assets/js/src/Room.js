@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "react-apollo";
 
 const getMessagesQuery = gql`
-  query ListMessage($roomId: ID!) {
+  query ListMessage($roomId: String!) {
     messages(roomId: $roomId) {
       id
       name
