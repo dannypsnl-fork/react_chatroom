@@ -3,7 +3,7 @@ defmodule ReactChatroom.Repo.Migrations.CreateMessages do
 
   def change do
     create table(:messages) do
-      add :room_id, references(:rooms)
+      add :room_id, references(:rooms), on_delete: :delete_all
       add :user_id, references(:users)
       add :body, :text
 
