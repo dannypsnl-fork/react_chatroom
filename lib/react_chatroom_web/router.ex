@@ -13,6 +13,7 @@ defmodule ReactChatroomWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/room/:id", PageController, :index
   end
 
   pipeline :api do
